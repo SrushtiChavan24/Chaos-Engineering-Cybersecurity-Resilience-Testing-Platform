@@ -1,6 +1,6 @@
 # Chaos Engineering + Cybersecurity Resilience Testing Platform
 
-A pre-publish resilience and security readiness gate for web applications — deploys a target app into an isolated environment and deliberately subjects it to load, infrastructure failure, and simulated attack, producing a single pass/fail readiness verdict.
+A pre-publish resilience and security readiness gate for web applications, deploys a target app into an isolated environment and deliberately subjects it to load, infrastructure failure, and simulated attack, producing a single pass/fail readiness verdict.
 
 See `PROJECT_SUMMARY.md` for the full project explanation, and the individual `phase-*.md` files for phase-by-phase implementation details.
 
@@ -54,7 +54,7 @@ kubectl get pods    # confirm 3 replicas Running
 
 ### 3. (Optional) Set up observability
 ```bash
-# If using Prometheus/Grafana via Helm — adjust to your actual setup
+# If using Prometheus/Grafana via Helm, adjust to your actual setup
 helm install prometheus prometheus-community/kube-prometheus-stack
 ```
 
@@ -91,7 +91,7 @@ Running the orchestrator end-to-end should produce a single readiness report sim
 Load Test:      PASS/FAIL (p95 latency, error rate vs. threshold)
 Chaos Recovery: PASS/FAIL (pod recovery time, success rate during kill vs. threshold)
 Security:       PASS/FAIL (attempts before block vs. threshold)
-OVERALL:        PASS/FAIL — application is/is not ready to publish
+OVERALL:        PASS/FAIL (application is/is not ready to publish)
 ```
 
 This report, along with the individual phase results (`results_phase3.json`, `results_phase4.json`, before/after security numbers), is the evidence base for the final project documentation (see `phase-8-documentation.md`).
