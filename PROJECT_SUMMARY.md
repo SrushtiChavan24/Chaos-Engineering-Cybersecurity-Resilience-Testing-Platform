@@ -5,61 +5,61 @@ A **pre-publish resilience and security readiness gate** for web applications. B
 
 
 ## System Architecture
-chaos-resilience-platform/
-│
-├── README.md
-├── PROJECT_SUMMARY.md
-├── requirements.txt
-├── .gitignore
-│
-├── docs/
-│   ├── phase-0-environment-setup.md
-│   ├── phase-1-target-app-deployment.md
-│   ├── phase-1b-self-healing-proof.md
-│   ├── phase-2-observability.md
-│   ├── phase-3-load-testing.md
-│   ├── phase-4-infrastructure-chaos.md
-│   ├── phase-5-security-testing.md
-│   ├── phase-6-orchestrator.md
-│   ├── phase-7-cicd-gate.md
-│   └── phase-8-documentation.md
-│
-├── app/
-│   ├── app.py                  # Flask target app: /health, /data, /login
-│   ├── Dockerfile
-│   └── requirements.txt        # app-only deps (flask, flask-limiter, prometheus-client)
-│
-├── k8s/
-│   ├── deployment.yaml          # 3-replica Deployment
-│   └── service.yaml
-│
-├── chaos/
-│   └── podchaos.yaml            # Chaos Mesh PodChaos experiment
-│
-├── load-testing/
-│   └── load_test.js             # k6 script (ramping VU stages)
-│
-├── security/
-│   └── bruteforce_test.py       # brute-force attack simulation
-│
-├── observability/               # Phase 2 — pick one path
-│   ├── prometheus-values.yaml   # if using Helm stack
-│   ├── grafana-dashboard.json
-│   └── log_parser.py            # if using lightweight logging instead
-│
-├── orchestrator/
-│   └── orchestrator.py          # runs load+chaos+security, scores, reports
-│
-├── results/                     # generated at runtime, not hand-written
-│   ├── results_phase3.json
-│   ├── results_phase4.json
-│   ├── security_before.json
-│   ├── security_after.json
-│   └── readiness_report.md
-│
-└── .github/
-    └── workflows/
-        └── resilience-gate.yml  # optional CI/CD gate (Phase 7)
+    chaos-resilience-platform/
+    │
+    ├── README.md
+    ├── PROJECT_SUMMARY.md
+    ├── requirements.txt
+    ├── .gitignore
+    │
+    ├── docs/
+    │   ├── phase-0-environment-setup.md
+    │   ├── phase-1-target-app-deployment.md
+    │   ├── phase-1b-self-healing-proof.md
+    │   ├── phase-2-observability.md
+    │   ├── phase-3-load-testing.md
+    │   ├── phase-4-infrastructure-chaos.md
+    │   ├── phase-5-security-testing.md
+    │   ├── phase-6-orchestrator.md
+    │   ├── phase-7-cicd-gate.md
+    │   └── phase-8-documentation.md
+    │
+    ├── app/
+    │   ├── app.py                  # Flask target app: /health, /data, /login
+    │   ├── Dockerfile
+    │   └── requirements.txt        # app-only deps (flask, flask-limiter, prometheus-client)
+    │
+    ├── k8s/
+    │   ├── deployment.yaml          # 3-replica Deployment
+    │   └── service.yaml
+    │
+    ├── chaos/
+    │   └── podchaos.yaml            # Chaos Mesh PodChaos experiment
+    │
+    ├── load-testing/
+    │   └── load_test.js             # k6 script (ramping VU stages)
+    │
+    ├── security/
+    │   └── bruteforce_test.py       # brute-force attack simulation
+    │
+    ├── observability/               # Phase 2 — pick one path
+    │   ├── prometheus-values.yaml   # if using Helm stack
+    │   ├── grafana-dashboard.json
+    │   └── log_parser.py            # if using lightweight logging instead
+    │
+    ├── orchestrator/
+    │   └── orchestrator.py          # runs load+chaos+security, scores, reports
+    │
+    ├── results/                     # generated at runtime, not hand-written
+    │   ├── results_phase3.json
+    │   ├── results_phase4.json
+    │   ├── security_before.json
+    │   ├── security_after.json
+    │   └── readiness_report.md
+    │
+    └── .github/
+        └── workflows/
+            └── resilience-gate.yml  # optional CI/CD gate (Phase 7)
 
 ## The Problem It Solves
 Applications are typically only tested against the "happy path" like normal traffic, cooperative users, no failures. In production, three things inevitably happen:
