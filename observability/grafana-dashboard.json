@@ -1,0 +1,28 @@
+{
+  "title": "Target App Resilience Dashboard",
+  "panels": [
+    {
+      "title": "Request Rate by Endpoint",
+      "type": "graph",
+      "targets": [
+        { "expr": "rate(app_requests_total[1m])", "legendFormat": "{{endpoint}} - {{status}}" }
+      ]
+    },
+    {
+      "title": "Request Latency (p95)",
+      "type": "graph",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, rate(app_request_latency_seconds_bucket[1m]))", "legendFormat": "{{endpoint}}" }
+      ]
+    },
+    {
+      "title": "Pod Count",
+      "type": "stat",
+      "targets": [
+        { "expr": "count(kube_pod_info{pod=~\"target-app.*\"})" }
+      ]
+    }
+  ],
+  "schemaVersion": 30,
+  "version": 1
+}

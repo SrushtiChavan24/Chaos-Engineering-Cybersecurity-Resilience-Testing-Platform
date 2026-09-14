@@ -1,0 +1,33 @@
+# Values for installing kube-prometheus-stack via Helm (optional, fuller
+# observability path — use log_parser.py instead if you want something
+# lighter-weight for local development).
+#
+# Install with:
+#   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+#   helm repo update
+#   helm install monitoring prometheus-community/kube-prometheus-stack \
+#     -f observability/prometheus-values.yaml
+#
+# Then port-forward Grafana:
+#   kubectl port-forward svc/monitoring-grafana 3000:80
+# Default login: admin / prom-operator
+
+grafana:
+  service:
+    type: NodePort
+  adminPassword: prom-operator
+
+prometheus:
+  prometheusSpec:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    # Scrape the target app's /metrics endpoint
+    additionalScrapeConfigs:
+      - job_name: 'target-app'
+        static_configs:
+          - targets: ['target-app-service.default.svc.cluster.local:80']
