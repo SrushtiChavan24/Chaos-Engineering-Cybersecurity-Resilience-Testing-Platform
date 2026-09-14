@@ -1,0 +1,80 @@
+name: Resilience Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  resilience-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Start Minikube
+        uses: medyagh/setup-minikube@latest
+        with:
+          driver: docker
+
+      - name: Build target app image inside Minikube
+        run: |
+          eval $(minikube docker-env)
+          docker build -t target-app:latest ./app
+
+      - name: Deploy app to cluster
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+          kubectl rollout status deployment/target-app --timeout=90s
+
+      - name: Install Chaos Mesh
+        run: |
+          curl -sSL https://mirrors.chaos-mesh.org/v2.6.2/install.sh | bash
+          kubectl wait --for=condition=Ready pods --all -n chaos-mesh --timeout=120s
+
+      - name: Get service URL
+        id: service_url
+        run: |
+          minikube service target-app-service --url > url.txt &
+          sleep 5
+          echo "url=$(cat url.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Run orchestrator (resilience gate)
+        run: |
+          cd orchestrator
+          python orchestrator.py --base-url "${{ steps.service_url.outputs.url }}"
+
+      - name: Check readiness verdict
+        run: |
+          if grep -q "NOT READY" results/readiness_report.md; then
+            echo "Resilience gate FAILED — see results/readiness_report.md"
+            cat results/readiness_report.md
+            exit 1
+          else
+            echo "Resilience gate PASSED"
+            cat results/readiness_report.md
+          fi
+
+      - name: Upload readiness report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: readiness-report
+          path: results/
