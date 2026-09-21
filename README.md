@@ -31,7 +31,7 @@ Install inside a virtual environment:
 ```bash
 python3 -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r app/requirements.txt
+pip install -r requirements.txt
 ```
 `requirements.txt` should include (adjust to what you actually use): `flask`, `requests`, `flask-limiter` (for Phase 5 rate limiting), `prometheus-client` (if using Phase 2 Option A).
 
