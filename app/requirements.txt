@@ -1,14 +1,3 @@
-# Host-side Python tooling for THIS repository (not the target application).
-#
-# The Flask target application's own dependencies are owned by
-# app/requirements.txt and are installed inside the container image by
-# app/Dockerfile. They are intentionally NOT repeated here, so that host
-# tooling and the application image can be installed and versioned separately.
-#
-# Who needs what (derived from the actual code):
-#   security/bruteforce_test.py    -> requests
-#   observability/log_parser.py    -> requests
-#   orchestrator/orchestrator.py   -> Python standard library only
-#
-# Pinned for reproducible runs (same convention as app/requirements.txt).
+flask==3.0.3
+prometheus-client==0.20.0
 requests==2.34.2
